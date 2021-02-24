@@ -141,7 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Coder.cpp" />
     <ClCompile Include="Decoder.cpp" />
-    <ClCompile Include="global.cpp" />
+    <ClCompile Include="global.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
