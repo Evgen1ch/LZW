@@ -1,1 +1,1 @@
-# LZW Compression algoruthm implementation by Evgen1ch
+# LZW Compression algorithm implementation by Evgen1ch
