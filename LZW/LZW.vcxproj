@@ -147,7 +147,6 @@
   <ItemGroup>
     <ClInclude Include="Coder.h" />
     <ClInclude Include="Decoder.h" />
-    <ClInclude Include="map_value_search.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

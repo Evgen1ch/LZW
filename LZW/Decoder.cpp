@@ -5,12 +5,13 @@ unsigned char Decoder::suffix = 0;
 unsigned int Decoder::shift = _BITS - 8;
 
 
-std::string find(std::map<std::string, unsigned short>& _map, unsigned short value) {
+std::string Decoder::find(std::map<std::string, unsigned short>& _map, unsigned short value) {
 	for (auto it = _map.begin(); it != _map.end(); ++it)
 		if (it->second == value)
 			return it->first;
 	return "";
 }
+
 void Decoder::Decode(const std::string& source, const std::string& target)
 {
 	InitializeDictionaryASCII();
@@ -38,11 +39,6 @@ void Decoder::Decode(const std::string& source, const std::string& target)
 	output << (char)old_code;
 	std::string s;
 
-	/*unsigned char a = ReadCode(input);
-	output << a;
-	std::string w(1, a);
-	unsigned short code;*/
-
 	while (input.peek() != EOF) {
 		
 		new_code = ReadCode(input);
@@ -55,32 +51,15 @@ void Decoder::Decode(const std::string& source, const std::string& target)
 			s = find(dictionary, old_code);
 			s = s + (char)character;
 		}
-
 		output << s;
 		character = s[0];
 		dictionary.emplace(find(dictionary, old_code) + (char)character, dictionary.size());
 		old_code = new_code;
-		/*
-		code = ReadCode(input);
-		std::string str = find(dictionary, code);
-		std::string wa = w + str;
-		
-		auto it = dictionary.find(wa);
-		if (it != dictionary.end()) //contains
-		{
-			w = wa;
-
-		}
-		else 
-		{
-
-		}*/
 	}
 
 	input.close();
 	output.close();
 }
-
 
 unsigned short Decoder::ReadCode(std::ifstream& input_stream)
 {
@@ -102,15 +81,11 @@ unsigned short Decoder::ReadCode(std::ifstream& input_stream)
 	return temp + suffix;
 }
 
-void Decoder::WriteCode(std::ofstream& output_stream, unsigned short code)
-{
-	std::string s = find(dictionary, code);
-	output_stream << s;
-}
-
 void Decoder::Reset()
 {
-
+	mask = (1 << (_BITS - 8)) - 1;
+	suffix = 0;
+	shift = _BITS - 8;
 }
 
 void Decoder::InitializeDictionaryASCII()

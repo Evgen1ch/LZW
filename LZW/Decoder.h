@@ -13,7 +13,7 @@ private:
 public:
 	static void Decode(const std::string& source, const std::string& target);
 	static unsigned short ReadCode(std::ifstream&);
-	static void WriteCode(std::ofstream&, unsigned short);
+	static std::string find(std::map<std::string, unsigned short>& _map, unsigned short value);
 	static void Reset();
 	static void InitializeDictionaryASCII();
 };

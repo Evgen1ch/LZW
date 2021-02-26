@@ -2,8 +2,7 @@
 #include <vector>
 #include "Coder.h"
 #include "Decoder.h"
-
-#define BITS 9
+#include "global.h"
 
 
 void initialize_dictionary_ascii(std::map<std::string, unsigned short>& dict)
@@ -146,35 +145,9 @@ void decode(std::ofstream& output_stream, std::vector<unsigned short>& input_cod
 
 int main(int argc, char* argv[])
 {
-	//if (argc < 2) return 1;
-
-	/*for (int i = 0; i < argc; i++)
-	{
-		std::cout << argv[i] << std::endl;
-	}
-
-	std::map<std::string, unsigned short> dictionary; 
-	initialize_dictionary_ascii(dictionary);
-	std::vector<unsigned short> output_codes;
-	
-	std::ifstream in("test.txt");
-	std::ofstream out("test_tar.txt");
-	
-	if (!in || !out) return 1;
-
-	code(in, dictionary, output_codes);
-	compress(output_codes, out);
-
-	in.close();
-	out.close();
-
-
-	in.open("test_tar.txt");
-	in.seekg(0);
-	auto a = decompress(in);*/
-
-	
 	Coder::Code("source.txt", "target.txt");
+	
 	Decoder::Decode("target.txt", "target2.txt");
+
 	return 0;
 }
