@@ -1,9 +1,7 @@
 #include <iostream>
-#include <fstream>
-#include <map>
-#include <unordered_map>
-#include <string>
 #include <vector>
+#include "Coder.h"
+#include "Decoder.h"
 
 #define BITS 9
 
@@ -107,7 +105,6 @@ std::vector<unsigned short>& decompress(std::ifstream& in_stream)
 		return *(new std::vector<unsigned short>());
 	}
 
-	//if ((BITS < 9)||(BITS > 16)) return *(new std::vector<unsigned short>());
 
 	std::vector<unsigned short>& input_codes = *(new std::vector<unsigned short>());
 	int shift = BITS - 8;
@@ -133,7 +130,6 @@ std::vector<unsigned short>& decompress(std::ifstream& in_stream)
 			in_stream >> input;
 		}
 	}
-	
 
 	return input_codes;
 }
@@ -152,7 +148,7 @@ int main(int argc, char* argv[])
 {
 	//if (argc < 2) return 1;
 
-	for (int i = 0; i < argc; i++)
+	/*for (int i = 0; i < argc; i++)
 	{
 		std::cout << argv[i] << std::endl;
 	}
@@ -166,34 +162,6 @@ int main(int argc, char* argv[])
 	
 	if (!in || !out) return 1;
 
-	/*
-	char a = input[0];
-	std::string w(1, a);
-	unsigned short code = a;
-	std::vector<unsigned short> output_codes;
-
-	for(unsigned i = 1; i < input.length(); i++)
-	{
-		a = input[i];
-		std::string wa = w + a;
-		auto it = dictionary.find(wa);
-		
-		if(it != dictionary.end()) //if dictionary contains the string
-		{
-			w = wa;
-			code = it->second;
-		}
-		else //dictionary not contains the string
-		{
-			dictionary.emplace(wa, dictionary.size());
-			w = a;
-			output_codes.push_back(code);
-			code = a;
-		}
-	}
-	output_codes.push_back(code);
-	*/
-
 	code(in, dictionary, output_codes);
 	compress(output_codes, out);
 
@@ -203,7 +171,10 @@ int main(int argc, char* argv[])
 
 	in.open("test_tar.txt");
 	in.seekg(0);
-	auto a = decompress(in);
+	auto a = decompress(in);*/
+
 	
+	Coder::Code("source.txt", "target.txt");
+	Decoder::Decode("target.txt", "target2.txt");
 	return 0;
 }
