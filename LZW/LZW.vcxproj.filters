@@ -27,6 +27,15 @@
     <ClCompile Include="global.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="functions.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Coder16.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Decoder16.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Coder.h">
@@ -35,5 +44,22 @@
     <ClInclude Include="Decoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Coder16.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Decoder16.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="target.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="target2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

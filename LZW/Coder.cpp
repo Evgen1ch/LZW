@@ -6,10 +6,9 @@ unsigned int Coder::shift = _BITS - 8;
 
 void Coder::Code(const std::string& source, const std::string& target)
 {
-	//wtf? it works without initialization of dictionary
 	InitializeDictionaryASCII();
-	std::ifstream input(source);
-	std::ofstream output(target);
+	std::ifstream input(source, std::ios::binary);
+	std::ofstream output(target, std::ios::binary);
 
 	if (!input || !output) {
 		input.close();
@@ -18,22 +17,21 @@ void Coder::Code(const std::string& source, const std::string& target)
 	}
 
 	//if file is empty return
-	if (!input.seekg(0, std::ios::end).tellg()) {
+	if (input.peek() == EOF) {
 		input.close();
 		output.close();
 		return;
 	}
 
-	input.seekg(0);
-	char a;
-	input >> a;
+	unsigned char a;
+	a = input.get();
 	std::string w(1, a);
 	unsigned short code = a;
 
-	while (!input.eof()) {
+	while (input.peek() != EOF) {
 
-		input >> a;
-		std::string wa = w + a;
+		a = input.get();
+		std::string wa = w + (char)a;
 
 		auto it = dictionary.find(wa);
 		if (it != dictionary.end()) {
@@ -48,7 +46,8 @@ void Coder::Code(const std::string& source, const std::string& target)
 		}
 	}
 	//the "tail" of message
-	output << (char)(suffix << (BITS - shift));
+	WriteCode(code, output);
+	output << (char)(suffix << (_BITS - shift));
 	input.close();
 	output.close();
 }
@@ -56,24 +55,23 @@ void Coder::Code(const std::string& source, const std::string& target)
 void Coder::InitializeDictionaryASCII()
 {
 	dictionary.clear();
-	for (unsigned char i = 0; i < UCHAR_MAX; i++)
+	for (int i = 0; i < 256; i++)
 	{
 		dictionary.emplace(std::make_pair(std::string(1, (char)i), (unsigned short)i));
 	}
-	dictionary.emplace(std::make_pair(std::string(1, (char)0xff), (unsigned short)0xff));
 }
 
 void Coder::WriteCode(unsigned short code, std::ofstream& out_stream)
 {
 	unsigned char temp = static_cast<char>(code >> shift);
-	out_stream << (char)(temp | (suffix << (BITS - shift)));
-	shift += BITS - 8;
+	out_stream << (char)(temp | (suffix << (_BITS - shift)));
+	shift += _BITS - 8;
 
 	suffix = (char)mask & static_cast<char>(code);
-	mask = static_cast<unsigned char>(mask << (BITS - 8)) + ((1 << (BITS - 8)) - 1);
-	if (shift == BITS) {
-		shift = BITS - 8;
-		mask = (1 << (BITS - 8)) - 1;
+	mask = static_cast<unsigned char>(mask << (_BITS - 8)) + ((1 << (_BITS - 8)) - 1);
+	if (shift == _BITS) {
+		shift = _BITS - 8;
+		mask = (1 << (_BITS - 8)) - 1;
 		out_stream << suffix;
 	}
 }

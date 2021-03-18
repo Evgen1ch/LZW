@@ -140,13 +140,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Coder.cpp" />
+    <ClCompile Include="Coder16.cpp" />
     <ClCompile Include="Decoder.cpp" />
+    <ClCompile Include="Decoder16.cpp" />
+    <ClCompile Include="functions.h" />
     <ClCompile Include="global.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Coder.h" />
+    <ClInclude Include="Coder16.h" />
     <ClInclude Include="Decoder.h" />
+    <ClInclude Include="Decoder16.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source.txt" />
+    <Text Include="target.txt" />
+    <Text Include="target2.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,8 +15,8 @@ std::string Decoder::find(std::map<std::string, unsigned short>& _map, unsigned 
 void Decoder::Decode(const std::string& source, const std::string& target)
 {
 	InitializeDictionaryASCII();
-	std::ifstream input(source);
-	std::ofstream output(target);
+	std::ifstream input(source, std::ios::binary);
+	std::ofstream output(target, std::ios::binary);
 
 	if (!input || !output) {
 		input.close();
@@ -25,22 +25,21 @@ void Decoder::Decode(const std::string& source, const std::string& target)
 	}
 
 	//if file is empty return
-	if (!input.seekg(0, std::ios::end).tellg()) {
+	if (input.peek() == EOF) {
 		input.close();
 		output.close();
 		return;
 	}
-
-	input.seekg(0);
 
 	int old_code = ReadCode(input); 
 	int new_code;
 	unsigned char character = old_code;
 	output << (char)old_code;
 	std::string s;
-
+	int iteration = 0;
 	while (input.peek() != EOF) {
-		
+		iteration++;
+		printf("%i\n", iteration);
 		new_code = ReadCode(input);
 		std::string new_translation = find(dictionary, new_code);
 
@@ -56,7 +55,6 @@ void Decoder::Decode(const std::string& source, const std::string& target)
 		dictionary.emplace(find(dictionary, old_code) + (char)character, dictionary.size());
 		old_code = new_code;
 	}
-
 	input.close();
 	output.close();
 }
@@ -68,7 +66,7 @@ unsigned short Decoder::ReadCode(std::ifstream& input_stream)
 	
 	unsigned char cutter = byte << (shift - 1);
 	unsigned short temp = cutter << 1;
-	input_stream >> byte;
+	byte = (char)input_stream.get();
 
 	suffix = byte >> (8 - shift);
 
@@ -76,7 +74,7 @@ unsigned short Decoder::ReadCode(std::ifstream& input_stream)
 	shift += _BITS - 8;
 	if (shift == _BITS) {
 		shift = _BITS - 8;
-		input_stream >> byte;
+		byte = input_stream.get();
 	}
 	return temp + suffix;
 }
@@ -91,9 +89,8 @@ void Decoder::Reset()
 void Decoder::InitializeDictionaryASCII()
 {
 	dictionary.clear();
-	for (unsigned char i = 0; i < UCHAR_MAX; i++)
+	for (int i = 0; i < 256; i++)
 	{
 		dictionary.emplace(std::make_pair(std::string(1, (char)i), (unsigned short)i));
 	}
-	dictionary.emplace(std::make_pair(std::string(1, (char)0xff), (unsigned short)0xff));
 }
