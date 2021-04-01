@@ -4,17 +4,22 @@
 class Coder
 {
 private: 
-	static const int _BITS = BITS;
-	static std::map<std::string, unsigned short> dictionary;
+	int codeLength = 9;
+	map<string, int> dictionary = map<string, int>();
 
-	static unsigned char mask;
-	static unsigned char suffix;
-	static unsigned int shift;
-	
+	unsigned char mask = (1 << (codeLength - 8)) - 1;
+	unsigned char suffix = 0;
+	unsigned int shift = codeLength - 8;
 public:
-	static void Code(const std::string& source, const std::string& target);
-	static void WriteCode(unsigned short code, std::ofstream& out_stream);
-	static void Reset();
-	static void InitializeDictionaryASCII();
+	void Code(const string& source, const string& target);
+	void CodeNew(const string& source, const string& target);
+	void WriteCode(unsigned short code, ofstream& outStream);
+	void WriteCodeNew(unsigned short code, ofstream& outStream);
+	void Reset();
+	void InitializeDictionaryASCII();
+
+	const map<string, int>& GetDict() {
+		return dictionary;
+	}
 };
 

@@ -1,18 +1,6 @@
 #include "Decoder.h"
-std::map<std::string, unsigned short> Decoder::dictionary = std::map<std::string, unsigned short>();
-unsigned char Decoder::mask = (1 << (_BITS - 8)) - 1;
-unsigned char Decoder::suffix = 0;
-unsigned int Decoder::shift = _BITS - 8;
 
-
-std::string Decoder::find(std::map<std::string, unsigned short>& _map, unsigned short value) {
-	for (auto it = _map.begin(); it != _map.end(); ++it)
-		if (it->second == value)
-			return it->first;
-	return "";
-}
-
-void Decoder::Decode(const std::string& source, const std::string& target)
+void Decoder::Decode(const string& source, const string& target)
 {
 	InitializeDictionaryASCII();
 	std::ifstream input(source, std::ios::binary);
@@ -31,59 +19,70 @@ void Decoder::Decode(const std::string& source, const std::string& target)
 		return;
 	}
 
-	int old_code = ReadCode(input); 
-	int new_code;
-	unsigned char character = old_code;
-	output << (char)old_code;
-	std::string s;
-	int iteration = 0;
-	while (input.peek() != EOF) {
-		iteration++;
-		printf("%i\n", iteration);
-		new_code = ReadCode(input);
-		std::string new_translation = find(dictionary, new_code);
+	int oldCode = ReadCode(input);
+	int newCode;
+	unsigned char character = oldCode;
+	output.write((char*)&character, 1);
+	while (input.peek() != EOF)
+	{
+		newCode = ReadCode(input);
+		auto it = dictionary.find(newCode);
+		string translation;
 
-		if (new_translation != "") {
-			s = new_translation;
+		if (it != dictionary.end()) { // есть в словаре
+			translation = it->second;
 		}
-		else {
-			s = find(dictionary, old_code);
-			s = s + (char)character;
+		else { //нет в словаре
+			translation = dictionary[oldCode];
+			translation = translation + (char)character;
 		}
-		output << s;
-		character = s[0];
-		dictionary.emplace(find(dictionary, old_code) + (char)character, dictionary.size());
-		old_code = new_code;
+		output.write(translation.c_str(), translation.length());
+		character = translation[0];
+		dictionary[dictionary.size()] = dictionary[oldCode] + (char)character;
+		oldCode = newCode;
+		if (dictionary.size() == (1 << codeLength)) {
+			codeLength++;
+		}
 	}
 	input.close();
 	output.close();
 }
 
-unsigned short Decoder::ReadCode(std::ifstream& input_stream)
+int Decoder::ReadCode(ifstream& inputStream)
 {
-	//not working, the last byte is wrong
-	static unsigned char byte = (char)input_stream.get();
-	
-	unsigned char cutter = byte << (shift - 1);
-	unsigned short temp = cutter << 1;
-	byte = (char)input_stream.get();
+	/*static unsigned bit_buffer = 0;
+	static int bits_read = 0;
 
-	suffix = byte >> (8 - shift);
+	int result = 0;
 
-	
-	shift += _BITS - 8;
-	if (shift == _BITS) {
-		shift = _BITS - 8;
-		byte = input_stream.get();
+	while (bits_read <= codeLength) 
+	{
+		auto a = (unsigned)inputStream.get();
+		bit_buffer |=  a << (24 - bits_read);
+		bits_read += 8;
 	}
-	return temp + suffix;
-}
 
-void Decoder::Reset()
-{
-	mask = (1 << (_BITS - 8)) - 1;
-	suffix = 0;
-	shift = _BITS - 8;
+	result = bit_buffer >> (32 - codeLength);
+	bit_buffer <<= codeLength;
+	bits_read -= codeLength;
+	return result;*/
+
+	static unsigned bit_buffer = 0;
+	static int bits_read = 0;
+
+	int result = 0;
+
+	while (bits_read <= codeLength)
+	{
+		auto a = (unsigned)inputStream.get();
+		bit_buffer |= a << (24 - bits_read);
+		bits_read += 8;
+	}
+
+	result = bit_buffer >> (32 - codeLength);
+	bit_buffer <<= codeLength;
+	bits_read -= codeLength;
+	return result;
 }
 
 void Decoder::InitializeDictionaryASCII()
@@ -91,6 +90,6 @@ void Decoder::InitializeDictionaryASCII()
 	dictionary.clear();
 	for (int i = 0; i < 256; i++)
 	{
-		dictionary.emplace(std::make_pair(std::string(1, (char)i), (unsigned short)i));
+		dictionary.emplace(i, string(1, i));
 	}
 }
