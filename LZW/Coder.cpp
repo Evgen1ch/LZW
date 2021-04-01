@@ -93,8 +93,8 @@ void Coder::CodeNew(const string& source, const string& target)
 		}
 	}
 	//the "tail" of message
-	WriteCodeNew(code, output);
-	WriteCodeNew(0, output);
+	WriteCodeNew(code, output, true);
+	//WriteCodeNew(0, output);
 	input.close();
 	output.close();
 }
@@ -123,7 +123,7 @@ void Coder::WriteCode(unsigned short code, ofstream& outStream)
 	}
 }
 
-void Coder::WriteCodeNew(unsigned short code, ofstream& outStream)
+void Coder::WriteCodeNew(unsigned short code, ofstream& outStream, bool flush)
 {
 	static unsigned bit_buffer = 0;
 	static int bits_written = 0;
@@ -135,6 +135,11 @@ void Coder::WriteCodeNew(unsigned short code, ofstream& outStream)
 		outStream << (char)(bit_buffer >> 24);
 		bit_buffer <<= 8;
 		bits_written -= 8;
+	}
+	if (flush) {
+		outStream << (char)(bit_buffer >> 24);
+		bit_buffer = 0;
+		bits_written = 0;
 	}
 }
 

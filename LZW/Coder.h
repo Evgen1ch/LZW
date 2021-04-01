@@ -14,7 +14,7 @@ public:
 	void Code(const string& source, const string& target);
 	void CodeNew(const string& source, const string& target);
 	void WriteCode(unsigned short code, ofstream& outStream);
-	void WriteCodeNew(unsigned short code, ofstream& outStream);
+	void WriteCodeNew(unsigned short code, ofstream& outStream, bool flush = false);
 	void Reset();
 	void InitializeDictionaryASCII();
 

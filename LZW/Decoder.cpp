@@ -33,14 +33,15 @@ void Decoder::Decode(const string& source, const string& target)
 			translation = it->second;
 		}
 		else { //нет в словаре
-			translation = dictionary[oldCode];
+			auto itt = dictionary.find(oldCode);			
+			translation = itt->second;
 			translation = translation + (char)character;
 		}
 		output.write(translation.c_str(), translation.length());
 		character = translation[0];
 		dictionary[dictionary.size()] = dictionary[oldCode] + (char)character;
 		oldCode = newCode;
-		if (dictionary.size() == (1 << codeLength)) {
+		if (dictionary.size() + 1 == (1 << codeLength)) {
 			codeLength++;
 		}
 	}
@@ -50,7 +51,7 @@ void Decoder::Decode(const string& source, const string& target)
 
 int Decoder::ReadCode(ifstream& inputStream)
 {
-	/*static unsigned bit_buffer = 0;
+	static unsigned bit_buffer = 0;
 	static int bits_read = 0;
 
 	int result = 0;
@@ -65,23 +66,7 @@ int Decoder::ReadCode(ifstream& inputStream)
 	result = bit_buffer >> (32 - codeLength);
 	bit_buffer <<= codeLength;
 	bits_read -= codeLength;
-	return result;*/
-
-	static unsigned bit_buffer = 0;
-	static int bits_read = 0;
-
-	int result = 0;
-
-	while (bits_read <= codeLength)
-	{
-		auto a = (unsigned)inputStream.get();
-		bit_buffer |= a << (24 - bits_read);
-		bits_read += 8;
-	}
-
-	result = bit_buffer >> (32 - codeLength);
-	bit_buffer <<= codeLength;
-	bits_read -= codeLength;
+	//printf("%i\n", result);
 	return result;
 }
 
