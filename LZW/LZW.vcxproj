@@ -144,13 +144,13 @@
     <ClCompile Include="DecoderOld.cpp" />
     <ClCompile Include="functions.h" />
     <ClCompile Include="global.h" />
-    <ClCompile Include="LZWFuckingDecoder.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Coder.h" />
     <ClInclude Include="Decoder.h" />
     <ClInclude Include="DecoderOld.h" />
+    <ClInclude Include="LzwTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="source.txt" />

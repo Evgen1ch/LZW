@@ -23,30 +23,49 @@ void Decoder::Decode(const string& source, const string& target)
 	int newCode;
 	unsigned char character = oldCode;
 	output.write((char*)&character, 1);
+
+	int counter = 0;
 	while (input.peek() != EOF)
 	{
 		newCode = ReadCode(input);
 		auto it = dictionary.find(newCode);
-		string translation;
 
+		string translation;
 		if (it != dictionary.end()) { // есть в словаре
 			translation = it->second;
 		}
 		else { //нет в словаре
 			auto itt = dictionary.find(oldCode);			
 			translation = itt->second;
-			translation = translation + (char)character;
+			translation += (char)character;
 		}
+
 		output.write(translation.c_str(), translation.length());
 		character = translation[0];
-		dictionary[dictionary.size()] = dictionary[oldCode] + (char)character;
-		oldCode = newCode;
+		auto oldCodeTranslation = dictionary.find(oldCode);
+		string newEntry = oldCodeTranslation->second + (char)character;
+		dictionary.insert(make_pair(dictionary.size(), newEntry));
+		if (dictionary.size() == 4095) {
+			newCode = ReadCode(input);
+			auto tr = dictionary.find(newCode)->second;
+			output.write(tr.c_str(), tr.length());
+			codeLength = 9;
+			InitializeDictionaryASCII();
+			newCode = ReadCode(input);
+			character = newCode;
+			output.write((char*)&character, 1);
+		}
 		if (dictionary.size() + 1 == (1 << codeLength)) {
 			codeLength++;
 		}
+		
+		oldCode = newCode;
+		
 	}
 	input.close();
 	output.close();
+
+	dictionary.clear();
 }
 
 int Decoder::ReadCode(ifstream& inputStream)
@@ -66,7 +85,6 @@ int Decoder::ReadCode(ifstream& inputStream)
 	result = bit_buffer >> (32 - codeLength);
 	bit_buffer <<= codeLength;
 	bits_read -= codeLength;
-	//printf("%i\n", result);
 	return result;
 }
 
@@ -75,6 +93,6 @@ void Decoder::InitializeDictionaryASCII()
 	dictionary.clear();
 	for (int i = 0; i < 256; i++)
 	{
-		dictionary.emplace(i, string(1, i));
+		dictionary.emplace(i, string(1, (char)i));
 	}
 }

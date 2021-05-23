@@ -70,7 +70,7 @@ void Coder::CodeNew(const string& source, const string& target)
 	unsigned char a;
 	a = input.get();
 	string w(1, a);
-	unsigned short code = a;
+	unsigned code = a;
 
 	while (input.peek() != EOF) {
 
@@ -83,20 +83,30 @@ void Coder::CodeNew(const string& source, const string& target)
 			code = it->second;
 		}
 		else {
-			dictionary.emplace(wa, dictionary.size());
+			dictionary.insert(make_pair(wa, dictionary.size()));
 			w = a;
 			WriteCodeNew(code, output);
 			code = a;
-		}
-		if (dictionary.size() == (1 << codeLength)) {
-			codeLength++;
+			if (dictionary.size() == 4096) {
+				WriteCodeNew(code, output);
+				codeLength = 9;
+				InitializeDictionaryASCII();
+				a = input.get();
+				w = string(1, a);
+				code = a;
+			}
+			if (dictionary.size() == (1 << codeLength)) {
+				codeLength++;
+			}
+			
 		}
 	}
-	//the "tail" of message
+	//output the "tail" of message
 	WriteCodeNew(code, output, true);
-	//WriteCodeNew(0, output);
 	input.close();
 	output.close();
+
+	dictionary.clear();
 }
 
 void Coder::InitializeDictionaryASCII()
@@ -123,7 +133,7 @@ void Coder::WriteCode(unsigned short code, ofstream& outStream)
 	}
 }
 
-void Coder::WriteCodeNew(unsigned short code, ofstream& outStream, bool flush)
+void Coder::WriteCodeNew(unsigned code, ofstream& outStream, bool flush)
 {
 	static unsigned bit_buffer = 0;
 	static int bits_written = 0;

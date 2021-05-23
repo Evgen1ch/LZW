@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <fstream>
+#include <iostream>
 
 using std::map;
 using std::string;
